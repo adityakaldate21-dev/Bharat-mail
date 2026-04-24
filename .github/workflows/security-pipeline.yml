@@ -22,7 +22,7 @@ jobs:
       - name: Snyk Test
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: snyk code test --severity-threshold=high
+        run: snyk test --severity-threshold=high
 
       - name: Build Docker
         run: docker build -t my-app .
