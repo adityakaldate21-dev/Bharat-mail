@@ -19,6 +19,9 @@ jobs:
       - name: Install Snyk
         run: npm install -g snyk
 
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
       - name: Snyk Test
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
