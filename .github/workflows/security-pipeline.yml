@@ -19,10 +19,9 @@ jobs:
       - name: Install Snyk
         run: npm install -g snyk
 
-      - name: Snyk Auth
-        run: snyk auth ${{ secrets.SNYK_TOKEN }}
-
       - name: Snyk Test
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: snyk test --severity-threshold=high
 
       - name: Build Docker
