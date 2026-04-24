@@ -1,0 +1,39 @@
+name: Secure Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Gitleaks Scan
+        uses: zricethezav/gitleaks-action@v2
+        with:
+          args: detect --exit-code 1
+
+      - name: Install Snyk
+        run: npm install -g snyk
+
+      - name: Snyk Auth
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+      - name: Snyk Test
+        run: snyk test --severity-threshold=high
+
+      - name: Build Docker
+        run: docker build -t my-app .
+
+      - name: Install Trivy
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget
+          wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.50.0_Linux-64bit.deb
+          sudo dpkg -i trivy_0.50.0_Linux-64bit.deb
+
+      - name: Trivy Scan
+        run: trivy image --severity HIGH,CRITICAL --exit-code 1 my-app
